@@ -24,4 +24,6 @@ Route.group(() =>{
   Route.get('/', async () => {
     return { hello: 'world' }
   })
-}).prefix('/api')
+  //Resource irá mostrar todas as rotas já store mostra só uma 
+  Route.resource("/moments", "MomentsController").apiOnly() //irá trazer apenas rotas de api
+}).prefix('/api') 
