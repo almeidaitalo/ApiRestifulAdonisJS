@@ -24,6 +24,8 @@ Route.group(() =>{
   Route.get('/', async () => {
     return { hello: 'world' }
   })
-  //Resource irá mostrar todas as rotas já store mostra só uma 
+  //Resource irá mostrar todas as rotas, já o store mostra só uma 
   Route.resource("/moments", "MomentsController").apiOnly() //irá trazer apenas rotas de api
+  
+  Route.post("/moments/:momentId/comments", "CommentsController.store")
 }).prefix('/api') 

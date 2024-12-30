@@ -43,8 +43,8 @@ export default class MomentsController {
     }
     //Listar todos os momentos
      public async index() {
-        const moments = await Moment.all()
-
+        const moments = await Moment.query().preload('comments')
+        
         return{
              
             data: moments,
@@ -55,6 +55,8 @@ export default class MomentsController {
     public async show({params}: HttpContextContract){
 
         const moment = await Moment.findOrFail(params.id) 
+
+        await moment.load('comments')
         
         return {
             data: moment, 
@@ -69,9 +71,42 @@ export default class MomentsController {
         await moment.delete()
 
         return {
-             message: "Momento excluido com sucesso!",
+            message: "Momento excluido com sucesso!",
             data: moment, 
         }
+        }
+        //Update
+        public async update({params, request}: HttpContextContract){
+    
+         
+         const body = request.body() 
 
+         const moment = await Moment.findOrFail(params.id) 
+         
+         moment.title = body.title
+         moment.description = body.description
+
+         if(moment.image != body.image || !moment.image ){
+            const image = request.file('image', this.validationOptions )
+            if(image){
+                const imageName = `${uuidv4()}.${image.extname}`
+
+            await image.move(Application.tmpPath('uploads'), {
+                name: imageName
+            })
+
+            moment.image = imageName
+            }
+            await moment.save()
+
+            return {
+                message: "Momento atualizar com sucesso!",
+                data: moment,
+            }
+            
+        }
+        
     }
-}
+    
+ }
+
