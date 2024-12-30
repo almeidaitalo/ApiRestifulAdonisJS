@@ -2,7 +2,7 @@ import { v4 as uuidv4 } from 'uuid'
 
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
-//fazer as manipulações de banco de dados
+//Fazer as manipulações de banco de dados
 import Moment from 'App/Models/Moment'
 
 import Application from '@ioc:Adonis/Core/Application'
@@ -13,11 +13,12 @@ export default class MomentsController {
         types: ['image'],
         size: "2mb"
     }
-    //Funcão: inscessão de dados no sistema
+    //Funcão: inserção de dados no sistema
     public async store({request, response}: HttpContextContract){
        
         const body = request.body()
         
+        //Fazer upload de imagens
         const image = request.file('image', this.validationOptions )
 
         if(image){
@@ -30,7 +31,7 @@ export default class MomentsController {
             body.image = imageName
         }
 
-        //fazer o inserte no banco de dados
+        //Fazer o inserte no banco de dados
         const moment = await Moment.create(body)
 
         response.status(201)
@@ -40,14 +41,37 @@ export default class MomentsController {
           datas: moment,
         }
     }
+    //Listar todos os momentos
      public async index() {
         const moments = await Moment.all()
 
         return{
              
             data: moments,
-        
         }
         
+    }
+    //Buscar por Id
+    public async show({params}: HttpContextContract){
+
+        const moment = await Moment.findOrFail(params.id) 
+        
+        return {
+            data: moment, 
+        }
+
+    }
+    //Delete
+    public async destroy({params}: HttpContextContract ) {
+        
+        const moment = await Moment.findOrFail(params.id) 
+        
+        await moment.delete()
+
+        return {
+             message: "Momento excluido com sucesso!",
+            data: moment, 
+        }
+
     }
 }
