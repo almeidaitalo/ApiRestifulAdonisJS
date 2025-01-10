@@ -18,6 +18,9 @@
 |
 */
 
+import Application from '@ioc:Adonis/Core/Application';
+
+
 import Route from '@ioc:Adonis/Core/Route'
 
 Route.group(() =>{
@@ -28,4 +31,20 @@ Route.group(() =>{
   Route.resource("/moments", "MomentsController").apiOnly() //irá trazer apenas rotas de api
   
   Route.post("/moments/:momentId/comments", "CommentsController.store")
+  Route.get("/moments/:momentId/comments", "CommentsController.index") 
+  
 }).prefix('/api') 
+
+
+Route.get('/api/uploads/*', async ({ params, response }) => {
+  // Concatena os segmentos do caminho para formar a string correta
+  const filePath = Application.tmpPath('uploads', ...params['*']);
+  
+  try {
+    // Retorna o arquivo solicitado
+    return response.download(filePath);
+  } catch (error) {
+    console.error('Erro ao tentar acessar o arquivo:', error.message);
+    return response.status(404).send({ error: 'Arquivo não encontrado' });
+  }
+});

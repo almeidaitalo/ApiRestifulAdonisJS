@@ -20,8 +20,8 @@ const corsConfig: CorsConfig = {
   | you can define a function to enable/disable it on per request basis as well.
   |
   */
-  enabled: (request) => request.url().startsWith('/api'),
-
+  enabled: (request) => request.url().startsWith('/api'), 
+  
   // You can also use a function that return true or false.
   // enabled: (request) => request.url().startsWith('/api')
 
@@ -44,8 +44,11 @@ const corsConfig: CorsConfig = {
   |                     one of the above values.
   |
   */
-  origin: true,
-
+  //origin: true,
+  origin: (origin) => {
+    return origin === 'http://localhost:3000'; // ou '*', se quiser liberar para todos
+  }, 
+  //origin: ['http://localhost:3000'],
   /*
   |--------------------------------------------------------------------------
   | Methods
